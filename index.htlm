@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.1/papaparse.min.js"></script>
+  <title>Médicament Search</title>
+</head>
+<body>
+  <h1>Recherche de Médicaments</h1>
+  <input type="text" id="medicationSearch" placeholder="Rechercher un médicament" />
+  <div id="results"></div>
+  <input type="text" id="selectedMedication" placeholder="Médicament sélectionné" readonly />
+  <script>
+    let medications = [];
+    Papa.parse("https://docs.google.com/spreadsheets/d/e/2PACX-1vSewBC_C_vvSsRia8_qFAXz_hePaJJzQCRXt0uxF7fFv3kYBnVfcT7w48tape7Wv05ijNZeBULboSAP/pub?output=csv", {
+      download: true,
+      header: true,
+      complete: function (results) {
+        medications = results.data;
+      }
+    });
+    $(document).ready(function () {
+      $('#medicationSearch').on('input', function () {
+        const searchValue = $(this).val().toLowerCase();
+        const results = medications.filter(med => med.nom && med.nom.toLowerCase().includes(searchValue));
+        $('#results').empty();
+        results.forEach(med => {
+          $('#results').append(`<div>${med.nom} - ${med.dosage || 'N/A'}</div>`);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
