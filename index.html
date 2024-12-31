@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Gestion des Médicaments</title>
+    <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self' jotform.com jotform.pro;">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.1/papaparse.min.js"></script>
     <style>
@@ -140,6 +141,9 @@
             $('#submitMeds').on('click', function () {
                 const jsonData = JSON.stringify(selectedMeds);
                 console.log("Médicaments soumis :", jsonData);
+
+                // Transmettre les données à l'iframe parent (JotForm)
+                window.parent.postMessage(jsonData, "*");
 
                 // URL du Webhook
                 const webhookUrl = "https://webhook.site/222fc124-33c7-481d-975a-bd94c14714eb";
