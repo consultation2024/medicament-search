@@ -20,13 +20,14 @@
             border-radius: 5px;
         }
         #selectedMedication {
-            text-align: left; /* Aligne le texte à gauche */
-            padding: 10px;    /* Ajoute un espace intérieur */
-            width: 100%;      /* Ajuste la largeur pour remplir son conteneur */
-            box-sizing: border-box; /* Assure que la largeur inclut le padding */
-            white-space: nowrap; /* Empêche le texte de passer à la ligne */
-            overflow: hidden; /* Évite tout débordement */
-            text-overflow: ellipsis; /* Ajoute des points de suspension si le texte est trop long */
+            text-align: left;          /* Aligne le texte à gauche */
+            padding: 0 10px;          /* Ajuste l'espace intérieur (gauche et droite uniquement) */
+            width: 100%;              /* Ajuste la largeur pour remplir son conteneur */
+            box-sizing: border-box;   /* Inclut le padding et la bordure dans la largeur */
+            margin: 0;                /* Supprime les marges externes */
+            white-space: nowrap;      /* Empêche le texte de passer à la ligne */
+            overflow: hidden;         /* Évite tout débordement */
+            text-overflow: ellipsis;  /* Ajoute des points de suspension si le texte est trop long */
         }
         #results {
             margin-top: 20px;
@@ -120,7 +121,7 @@
 
             // Sélection d'un médicament
             $(document).on('click', '.medication-item', function () {
-                const medName = $(this).text(); // Récupère le texte de l'élément cliqué
+                const medName = $(this).text().trim(); // Supprime les espaces au début et à la fin
                 console.log("Médicament sélectionné :", medName); // Débogage
                 $('#selectedMedication').val(medName); // Met à jour le champ "selectedMedication"
                 $('#results').empty(); // Efface les résultats de la recherche après la sélection
