@@ -22,8 +22,11 @@
         #selectedMedication {
             text-align: left; /* Aligne le texte à gauche */
             padding: 10px;    /* Ajoute un espace intérieur */
-            width: 100%;      /* Optionnel : ajuste la largeur */
-            box-sizing: border-box; /* Assure que le padding n'affecte pas la largeur */
+            width: 100%;      /* Ajuste la largeur pour remplir son conteneur */
+            box-sizing: border-box; /* Assure que la largeur inclut le padding */
+            white-space: nowrap; /* Empêche le texte de passer à la ligne */
+            overflow: hidden; /* Évite tout débordement */
+            text-overflow: ellipsis; /* Ajoute des points de suspension si le texte est trop long */
         }
         #results {
             margin-top: 20px;
@@ -121,59 +124,6 @@
                 console.log("Médicament sélectionné :", medName); // Débogage
                 $('#selectedMedication').val(medName); // Met à jour le champ "selectedMedication"
                 $('#results').empty(); // Efface les résultats de la recherche après la sélection
-            });
-
-            // Ajouter un médicament à la liste
-            $('#addMedication').on('click', function () {
-                const medName = $('#selectedMedication').val();
-                const dosage = $('#dosage').val();
-                if (medName && dosage) {
-                    selectedMeds.push({ medName, dosage });
-                    $('#selected-meds tbody').append(`
-                        <tr>
-                            <td>${medName}</td>
-                            <td>${dosage}</td>
-                            <td><button class="remove-medicine">Supprimer</button></td>
-                        </tr>
-                    `);
-                    console.log("Médicament ajouté :", { medName, dosage }); // Débogage
-                    $('#selectedMedication').val('');
-                    $('#dosage').val('');
-                }
-            });
-
-            // Supprimer un médicament
-            $(document).on('click', '.remove-medicine', function () {
-                const row = $(this).closest('tr');
-                const medName = row.find('td:first').text();
-                selectedMeds = selectedMeds.filter(med => med.medName !== medName);
-                row.remove();
-                console.log("Médicament supprimé :", medName); // Débogage
-            });
-
-            // Soumettre les médicaments via le Webhook
-            $('#submitMeds').on('click', function () {
-                const jsonData = JSON.stringify(selectedMeds);
-                console.log("Médicaments soumis :", jsonData);
-
-                // URL du Webhook
-                const webhookUrl = "https://webhook.site/222fc124-33c7-481d-975a-bd94c14714eb";
-
-                // Envoyer les données via AJAX
-                $.ajax({
-                    url: webhookUrl,
-                    type: "POST",
-                    contentType: "application/json",
-                    data: jsonData,
-                    success: function (response) {
-                        alert("Données envoyées avec succès !");
-                        console.log("Réponse du serveur :", response);
-                    },
-                    error: function (err) {
-                        console.error("Erreur lors de l'envoi des données :", err);
-                        alert("Erreur lors de l'envoi des données.");
-                    }
-                });
             });
         });
     </script>
