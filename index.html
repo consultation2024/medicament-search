@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Recherche de Médicaments</title>
+    <title>Gestion des Médicaments</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.1/papaparse.min.js"></script>
     <style>
@@ -12,10 +12,9 @@
         h1 {
             color: #2c3e50;
         }
-        input {
-            width: 300px;
-            padding: 10px;
+        input, button {
             margin: 10px 0;
+            padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
@@ -25,54 +24,123 @@
         .medication-item {
             padding: 5px;
             border-bottom: 1px solid #ddd;
+            cursor: pointer;
         }
         .medication-item:hover {
             background-color: #f9f9f9;
-            cursor: pointer;
+        }
+        #selected-meds {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
         }
     </style>
 </head>
 <body>
-    <h1>Recherche de Médicaments</h1>
-    <p>Recherchez un médicament en tapant son nom ci-dessous :</p>
+    <h1>Gestion des Médicaments</h1>
+    <p>Recherchez un médicament et ajoutez sa posologie :</p>
     <input type="text" id="medicationSearch" placeholder="Rechercher un médicament..." />
     <div id="results"></div>
 
+    <h2>Ajouter un médicament</h2>
+    <input type="text" id="selectedMedication" placeholder="Médicament sélectionné" readonly />
+    <input type="text" id="dosage" placeholder="Entrez la posologie..." />
+    <button id="addMedication">Ajouter à la liste</button>
+
+    <h2>Médicaments ajoutés</h2>
+    <table id="selected-meds">
+        <thead>
+            <tr>
+                <th>Médicament</th>
+                <th>Posologie</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <button id="submitMeds">Envoyer les données</button>
+
     <script>
         let medications = [];
+        let selectedMeds = [];
 
         // Charger les données depuis le fichier CSV
         Papa.parse("https://docs.google.com/spreadsheets/d/e/2PACX-1vSewBC_C_vvSsRia8_qFAXz_hePaJJzQCRXt0uxF7fFv3kYBnVfcT7w48tape7Wv05ijNZeBULboSAP/pub?output=csv", {
             download: true,
             header: true,
             complete: function (results) {
-                console.log("Données chargées :", results.data);
-                medications = results.data; // Stocker les données pour la recherche
+                medications = results.data;
             },
             error: function (err) {
                 console.error("Erreur lors du chargement du fichier CSV :", err);
             }
         });
 
-        // Fonction de recherche
+        // Recherche de médicament
         $(document).ready(function () {
             $('#medicationSearch').on('input', function () {
                 const searchValue = $(this).val().toLowerCase();
                 const results = medications.filter(med => med.nom && med.nom.toLowerCase().includes(searchValue));
 
-                // Afficher les résultats
                 $('#results').empty();
-                if (results.length > 0) {
-                    results.forEach(med => {
-                        $('#results').append(`
-                            <div class="medication-item">
-                                ${med.nom}
-                            </div>
-                        `);
-                    });
-                } else {
-                    $('#results').append(`<p>Aucun médicament trouvé.</p>`);
+                results.forEach(med => {
+                    $('#results').append(`<div class="medication-item" data-name="${med.nom}">
+                        ${med.nom}
+                    </div>`);
+                });
+            });
+
+            // Sélection d'un médicament
+            $(document).on('click', '.medication-item', function () {
+                const medName = $(this).data('name');
+                $('#selectedMedication').val(medName);
+            });
+
+            // Ajouter un médicament à la liste
+            $('#addMedication').on('click', function () {
+                const medName = $('#selectedMedication').val();
+                const dosage = $('#dosage').val();
+                if (medName && dosage) {
+                    selectedMeds.push({ medName, dosage });
+                    $('#selected-meds tbody').append(`
+                        <tr>
+                            <td>${medName}</td>
+                            <td>${dosage}</td>
+                            <td><button class="remove-medicine">Supprimer</button></td>
+                        </tr>
+                    `);
+                    $('#selectedMedication').val('');
+                    $('#dosage').val('');
                 }
+            });
+
+            // Supprimer un médicament
+            $(document).on('click', '.remove-medicine', function () {
+                const row = $(this).closest('tr');
+                const medName = row.find('td:first').text();
+                selectedMeds = selectedMeds.filter(med => med.medName !== medName);
+                row.remove();
+            });
+
+            // Soumettre les médicaments
+            $('#submitMeds').on('click', function () {
+                const jsonData = JSON.stringify(selectedMeds);
+                console.log("Médicaments soumis :", jsonData);
+
+                // Vous pouvez rediriger vers JotForm avec les données
+                // ou les envoyer à une API.
+                alert("Données soumises !");
             });
         });
     </script>
