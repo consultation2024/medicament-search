@@ -82,6 +82,7 @@
             header: true,
             complete: function (results) {
                 medications = results.data;
+                console.log("Données chargées :", medications); // Débogage
             },
             error: function (err) {
                 console.error("Erreur lors du chargement du fichier CSV :", err);
@@ -95,18 +96,23 @@
                 const results = medications.filter(med => med.nom && med.nom.toLowerCase().includes(searchValue));
 
                 $('#results').empty();
-                results.forEach(med => {
-                    $('#results').append(`
-                        <div class="medication-item" data-name="${med.nom}">
-                            ${med.nom}
-                        </div>
-                    `);
-                });
+                if (results.length > 0) {
+                    results.forEach(med => {
+                        $('#results').append(`
+                            <div class="medication-item" data-name="${med.nom}">
+                                ${med.nom}
+                            </div>
+                        `);
+                    });
+                } else {
+                    $('#results').append(`<p>Aucun médicament trouvé.</p>`);
+                }
             });
 
             // Sélection d'un médicament
             $(document).on('click', '.medication-item', function () {
                 const medName = $(this).text(); // Récupère le texte de l'élément cliqué
+                console.log("Médicament sélectionné :", medName); // Débogage
                 $('#selectedMedication').val(medName); // Met à jour le champ "selectedMedication"
                 $('#results').empty(); // Efface les résultats de la recherche après la sélection
             });
@@ -124,6 +130,7 @@
                             <td><button class="remove-medicine">Supprimer</button></td>
                         </tr>
                     `);
+                    console.log("Médicament ajouté :", { medName, dosage }); // Débogage
                     $('#selectedMedication').val('');
                     $('#dosage').val('');
                 }
@@ -135,15 +142,13 @@
                 const medName = row.find('td:first').text();
                 selectedMeds = selectedMeds.filter(med => med.medName !== medName);
                 row.remove();
+                console.log("Médicament supprimé :", medName); // Débogage
             });
 
             // Soumettre les médicaments via le Webhook
             $('#submitMeds').on('click', function () {
                 const jsonData = JSON.stringify(selectedMeds);
                 console.log("Médicaments soumis :", jsonData);
-
-                // Transmettre les données à l'iframe parent (JotForm)
-                window.parent.postMessage(jsonData, "*");
 
                 // URL du Webhook
                 const webhookUrl = "https://webhook.site/222fc124-33c7-481d-975a-bd94c14714eb";
