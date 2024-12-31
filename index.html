@@ -95,16 +95,19 @@
 
                 $('#results').empty();
                 results.forEach(med => {
-                    $('#results').append(`<div class="medication-item" data-name="${med.nom}">
-                        ${med.nom}
-                    </div>`);
+                    $('#results').append(`
+                        <div class="medication-item">
+                            ${med.nom}
+                        </div>
+                    `);
                 });
             });
 
             // Sélection d'un médicament
             $(document).on('click', '.medication-item', function () {
-                const medName = $(this).data('name');
-                $('#selectedMedication').val(medName);
+                const medName = $(this).text(); // Récupère le texte de l'élément cliqué
+                $('#selectedMedication').val(medName); // Met à jour le champ "selectedMedication"
+                $('#results').empty(); // Efface les résultats de la recherche après la sélection
             });
 
             // Ajouter un médicament à la liste
