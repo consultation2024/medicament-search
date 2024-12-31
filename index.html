@@ -132,9 +132,11 @@
                 const medName = $('#selectedMedication').val().trim(); // Récupère le médicament sélectionné
                 const dosage = $('#dosage').val().trim(); // Récupère la posologie
 
+                console.log("Tentative d'ajout :", { medName, dosage }); // Log pour débogage
+
                 if (medName && dosage) {
                     selectedMeds.push({ medName, dosage }); // Ajoute l'objet à la liste
-                    console.log("Médicament ajouté :", { medName, dosage }); // Débogage
+                    console.log("Médicament ajouté à la liste :", { medName, dosage }); // Débogage
 
                     // Ajoute une ligne au tableau
                     $('#selected-meds tbody').append(`
@@ -157,9 +159,13 @@
             $(document).on('click', '.remove-medicine', function () {
                 const row = $(this).closest('tr');
                 const medName = row.find('td:first').text();
+
+                console.log("Tentative de suppression :", medName); // Log pour débogage
+
                 selectedMeds = selectedMeds.filter(med => med.medName !== medName); // Supprime l'objet correspondant
                 row.remove(); // Supprime la ligne du tableau
-                console.log("Médicament supprimé :", medName); // Débogage
+
+                console.log("Liste après suppression :", selectedMeds); // Vérifie la mise à jour de la liste
             });
 
             // Soumettre les médicaments via le Webhook
