@@ -20,14 +20,14 @@
             border-radius: 5px;
         }
         #selectedMedication {
-            text-align: left;          /* Aligne le texte à gauche */
-            padding: 0 10px;          /* Ajuste l'espace intérieur (gauche et droite uniquement) */
-            width: 100%;              /* Ajuste la largeur pour remplir son conteneur */
-            box-sizing: border-box;   /* Inclut le padding et la bordure dans la largeur */
-            margin: 0;                /* Supprime les marges externes */
-            white-space: nowrap;      /* Empêche le texte de passer à la ligne */
-            overflow: hidden;         /* Évite tout débordement */
-            text-overflow: ellipsis;  /* Ajoute des points de suspension si le texte est trop long */
+            text-align: left;
+            padding: 0 10px;
+            width: 100%;
+            box-sizing: border-box;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         #results {
             margin-top: 20px;
@@ -125,6 +125,66 @@
                 console.log("Médicament sélectionné :", medName); // Débogage
                 $('#selectedMedication').val(medName); // Met à jour le champ "selectedMedication"
                 $('#results').empty(); // Efface les résultats de la recherche après la sélection
+            });
+
+            // Ajouter un médicament à la liste
+            $('#addMedication').on('click', function () {
+                const medName = $('#selectedMedication').val().trim(); // Récupère le médicament sélectionné
+                const dosage = $('#dosage').val().trim(); // Récupère la posologie
+
+                if (medName && dosage) {
+                    selectedMeds.push({ medName, dosage }); // Ajoute l'objet à la liste
+                    console.log("Médicament ajouté :", { medName, dosage }); // Débogage
+
+                    // Ajoute une ligne au tableau
+                    $('#selected-meds tbody').append(`
+                        <tr>
+                            <td>${medName}</td>
+                            <td>${dosage}</td>
+                            <td><button class="remove-medicine">Supprimer</button></td>
+                        </tr>
+                    `);
+
+                    // Réinitialise les champs
+                    $('#selectedMedication').val('');
+                    $('#dosage').val('');
+                } else {
+                    alert("Veuillez sélectionner un médicament et entrer une posologie.");
+                }
+            });
+
+            // Supprimer un médicament
+            $(document).on('click', '.remove-medicine', function () {
+                const row = $(this).closest('tr');
+                const medName = row.find('td:first').text();
+                selectedMeds = selectedMeds.filter(med => med.medName !== medName); // Supprime l'objet correspondant
+                row.remove(); // Supprime la ligne du tableau
+                console.log("Médicament supprimé :", medName); // Débogage
+            });
+
+            // Soumettre les médicaments via le Webhook
+            $('#submitMeds').on('click', function () {
+                const jsonData = JSON.stringify(selectedMeds);
+                console.log("Médicaments soumis :", jsonData);
+
+                // URL du Webhook
+                const webhookUrl = "https://webhook.site/222fc124-33c7-481d-975a-bd94c14714eb";
+
+                // Envoyer les données via AJAX
+                $.ajax({
+                    url: webhookUrl,
+                    type: "POST",
+                    contentType: "application/json",
+                    data: jsonData,
+                    success: function (response) {
+                        alert("Données envoyées avec succès !");
+                        console.log("Réponse du serveur :", response);
+                    },
+                    error: function (err) {
+                        console.error("Erreur lors de l'envoi des données :", err);
+                        alert("Erreur lors de l'envoi des données.");
+                    }
+                });
             });
         });
     </script>
