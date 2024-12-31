@@ -133,14 +133,29 @@
                 row.remove();
             });
 
-            // Soumettre les médicaments
+            // Soumettre les médicaments via le Webhook
             $('#submitMeds').on('click', function () {
                 const jsonData = JSON.stringify(selectedMeds);
                 console.log("Médicaments soumis :", jsonData);
 
-                // Vous pouvez rediriger vers JotForm avec les données
-                // ou les envoyer à une API.
-                alert("Données soumises !");
+                // URL du Webhook
+                const webhookUrl = "https://webhook.site/222fc124-33c7-481d-975a-bd94c14714eb";
+
+                // Envoyer les données via AJAX
+                $.ajax({
+                    url: webhookUrl,
+                    type: "POST",
+                    contentType: "application/json",
+                    data: jsonData,
+                    success: function (response) {
+                        alert("Données envoyées avec succès !");
+                        console.log("Réponse du serveur :", response);
+                    },
+                    error: function (err) {
+                        console.error("Erreur lors de l'envoi des données :", err);
+                        alert("Erreur lors de l'envoi des données.");
+                    }
+                });
             });
         });
     </script>
