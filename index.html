@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Gestion des Médicaments</title>
-    <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self' jotform.com jotform.pro;">
+    <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self' jotform.com jotform.pro';">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.1/papaparse.min.js"></script>
     <style>
@@ -97,7 +97,7 @@
                 $('#results').empty();
                 results.forEach(med => {
                     $('#results').append(`
-                        <div class="medication-item">
+                        <div class="medication-item" data-name="${med.nom}">
                             ${med.nom}
                         </div>
                     `);
