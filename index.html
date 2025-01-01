@@ -160,7 +160,7 @@
             // Soumettre les médicaments via postMessage
             $('#submitMeds').on('click', function () {
                 const jsonData = JSON.stringify(selectedMeds);
-                window.parent.postMessage({ action: 'updateField', field: 'donnéesMédicaments', value: jsonData }, "*");
+                window.parent.postMessage({ action: 'updateField', field: 'input_71', value: jsonData }, "*");
                 alert("Données envoyées à JotForm avec succès !");
             });
         });
