@@ -157,16 +157,20 @@
                 row.remove();
             });
 
-            // Soumettre les médicaments via postMessage
+            // Soumettre les médicaments via redirection JotForm avec préremplissage via URL
             $('#submitMeds').on('click', function () {
-                const jsonData = JSON.stringify(selectedMeds);
+                const medicationsText = selectedMeds
+                    .map(med => `Médicament: ${med.medName}, Posologie: ${med.dosage}`)
+                    .join('\n');
 
-                console.log("Données à envoyer :", jsonData);
+                const encodedData = encodeURIComponent(medicationsText);
 
-                // Envoi des données à JotForm via postMessage
-                window.parent.postMessage({ action: 'updateField', field: '#input_71', value: jsonData }, "*");
+                // Remplacez par l'ID de votre formulaire JotForm
+                const jotformID = "1234567890";
+                const url = `https://form.jotform.com/${jotformID}?input_71=${encodedData}`;
 
-                alert("Données envoyées à JotForm avec succès !");
+                // Redirection vers le formulaire avec les données préremplies
+                window.location.href = url;
             });
         });
     </script>
