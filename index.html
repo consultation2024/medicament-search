@@ -122,23 +122,18 @@
             // Sélection d'un médicament
             $(document).on('click', '.medication-item', function () {
                 const medName = $(this).text().trim(); // Supprime les espaces au début et à la fin
-                console.log("Médicament sélectionné :", medName); // Débogage
                 $('#selectedMedication').val(medName); // Met à jour le champ "selectedMedication"
                 $('#results').empty(); // Efface les résultats de la recherche après la sélection
             });
 
             // Ajouter un médicament à la liste
             $('#addMedication').on('click', function () {
-                const medName = $('#selectedMedication').val().trim(); // Récupère le médicament sélectionné
-                const dosage = $('#dosage').val().trim(); // Récupère la posologie
-
-                console.log("Tentative d'ajout :", { medName, dosage }); // Log pour débogage
+                const medName = $('#selectedMedication').val().trim();
+                const dosage = $('#dosage').val().trim();
 
                 if (medName && dosage) {
-                    selectedMeds.push({ medName, dosage }); // Ajoute l'objet à la liste
-                    console.log("Médicament ajouté à la liste :", { medName, dosage }); // Débogage
+                    selectedMeds.push({ medName, dosage });
 
-                    // Ajoute une ligne au tableau
                     $('#selected-meds tbody').append(`
                         <tr>
                             <td>${medName}</td>
@@ -147,7 +142,6 @@
                         </tr>
                     `);
 
-                    // Réinitialise les champs
                     $('#selectedMedication').val('');
                     $('#dosage').val('');
                 } else {
@@ -159,38 +153,15 @@
             $(document).on('click', '.remove-medicine', function () {
                 const row = $(this).closest('tr');
                 const medName = row.find('td:first').text();
-
-                console.log("Tentative de suppression :", medName); // Log pour débogage
-
-                selectedMeds = selectedMeds.filter(med => med.medName !== medName); // Supprime l'objet correspondant
-                row.remove(); // Supprime la ligne du tableau
-
-                console.log("Liste après suppression :", selectedMeds); // Vérifie la mise à jour de la liste
+                selectedMeds = selectedMeds.filter(med => med.medName !== medName);
+                row.remove();
             });
 
-            // Soumettre les médicaments via le Webhook
+            // Soumettre les médicaments via postMessage
             $('#submitMeds').on('click', function () {
                 const jsonData = JSON.stringify(selectedMeds);
-                console.log("Médicaments soumis :", jsonData);
-
-                // URL du Webhook
-                const webhookUrl = "https://webhook.site/222fc124-33c7-481d-975a-bd94c14714eb";
-
-                // Envoyer les données via AJAX
-                $.ajax({
-                    url: webhookUrl,
-                    type: "POST",
-                    contentType: "application/json",
-                    data: jsonData,
-                    success: function (response) {
-                        alert("Données envoyées avec succès !");
-                        console.log("Réponse du serveur :", response);
-                    },
-                    error: function (err) {
-                        console.error("Erreur lors de l'envoi des données :", err);
-                        alert("Erreur lors de l'envoi des données.");
-                    }
-                });
+                window.parent.postMessage({ action: 'submitMeds', data: jsonData }, "*");
+                alert("Données envoyées à JotForm avec succès !");
             });
         });
     </script>
